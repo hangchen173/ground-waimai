@@ -1,0 +1,352 @@
+################################################################
+# Restaurant API
+################################################################
+
+### 1. Get all restaurants (200 OK)
+GET http://localhost:8080/api/restaurants
+Accept: application/json
+
+###
+
+### 2. Get a restaurant (exists → 200 OK)
+GET http://localhost:8080/api/restaurants/1
+Accept: application/json
+
+###
+
+### 3. Get a restaurant (not exists → 404 Not Found)
+GET http://localhost:8080/api/restaurants/9999
+Accept: application/json
+
+###
+
+### 4. Create restaurant (valid → 201 Created)
+POST http://localhost:8080/api/restaurants
+Content-Type: application/json
+
+{
+  "name": "Happy Pizza",
+  "address": "123 Main St",
+  "phone": "123-456-7890"
+}
+
+###
+
+### 5. Create restaurant (missing required fields → 400 Bad Request)
+POST http://localhost:8080/api/restaurants
+Content-Type: application/json
+
+{
+  "address": "Missing Name Street"
+}
+
+###
+
+### 6. Update restaurant (exists → 200 OK)
+PUT http://localhost:8080/api/restaurants/1
+Content-Type: application/json
+
+{
+  "name": "Happy Pizza Deluxe",
+  "address": "123 Main St",
+  "phone": "987-654-3210"
+}
+
+###
+
+### 7. Update restaurant (not found → 404 Not Found)
+PUT http://localhost:8080/api/restaurants/9999
+Content-Type: application/json
+
+{
+  "name": "Nonexistent Restaurant",
+  "address": "Nowhere City",
+  "phone": "000-000-0000"
+}
+
+###
+
+### 8. Delete restaurant (exists → 200 OK)
+DELETE http://localhost:8080/api/restaurants/1
+
+###
+
+### 9. Delete restaurant (not found → 404 Not Found)
+DELETE http://localhost:8080/api/restaurants/9999
+
+
+
+################################################################
+# Customer API
+################################################################
+
+### 1. Get all customers (200 OK)
+GET http://localhost:8080/api/customers
+Accept: application/json
+
+###
+
+### 2. Get customer by ID (exists)
+GET http://localhost:8080/api/customers/1
+Accept: application/json
+
+###
+
+### 3. Get customer by ID (not exists → 404)
+GET http://localhost:8080/api/customers/9999
+Accept: application/json
+
+###
+
+### 4. Create customer (valid → 201 Created)
+POST http://localhost:8080/api/customers
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "123-456-7890"
+}
+
+###
+
+### 5. Create customer (invalid: missing name → 400 Bad Request)
+POST http://localhost:8080/api/customers
+Content-Type: application/json
+
+{
+  "email": "no_name@example.com"
+}
+
+###
+
+### 6. Update customer (exists → 200 OK)
+PUT http://localhost:8080/api/customers/1
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "phone": "987-654-3210"
+}
+
+###
+
+### 7. Update customer (not found → 404)
+PUT http://localhost:8080/api/customers/9999
+Content-Type: application/json
+
+{
+  "name": "Ghost",
+  "email": "ghost@example.com",
+  "phone": "000-000-0000"
+}
+
+###
+
+### 8. Delete customer (exists → 200 OK)
+DELETE http://localhost:8080/api/customers/2
+
+###
+
+### 9. Delete customer (not found → 404)
+DELETE http://localhost:8080/api/customers/9999
+
+
+
+################################################################
+# Table API
+################################################################
+
+### 1. Get all tables
+GET http://localhost:8080/api/tables
+Accept: application/json
+
+###
+
+### 2. Get table by ID (exists)
+GET http://localhost:8080/api/tables/1
+Accept: application/json
+
+###
+
+### 3. Get table by ID (not found → 404)
+GET http://localhost:8080/api/tables/9999
+Accept: application/json
+
+###
+
+### 4. Create table (valid → 201 Created)
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "restaurantId": 1,
+  "tableNumber": 5,
+  "capacity": 4
+}
+
+###
+
+### 5. Create table (missing required fields → 400 Bad Request)
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "tableNumber": 2
+}
+
+###
+
+### 6. Update table (exists → 200 OK)
+PUT http://localhost:8080/api/tables/1
+Content-Type: application/json
+
+{
+  "restaurantId": 1,
+  "tableNumber": 1,
+  "capacity": 6
+}
+
+###
+
+### 7. Update table (not found → 404)
+PUT http://localhost:8080/api/tables/9999
+Content-Type: application/json
+
+{
+  "restaurantId": 1,
+  "tableNumber": 99,
+  "capacity": 2
+}
+
+###
+
+### 8. Delete table (exists)
+DELETE http://localhost:8080/api/tables/1
+
+###
+
+### 9. Delete table (not found → 404)
+DELETE http://localhost:8080/api/tables/9999
+
+
+
+################################################################
+# Reservation API — Success Scenarios
+################################################################
+
+### 1. Get all reservations
+GET http://localhost:8080/api/reservations
+Accept: application/json
+
+###
+
+### 2. Get reservation by ID (exists)
+GET http://localhost:8080/api/reservations/1
+Accept: application/json
+
+###
+
+### 3. Get reservation by ID (not exist → 404)
+GET http://localhost:8080/api/reservations/9999
+Accept: application/json
+
+###
+
+### 4. Create reservation (valid → 201 Created)
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 1,
+  "reservationTime": "2025-12-10T19:00:00",
+  "numGuests": 4,
+  "durationMinutes": 60
+}
+
+---
+
+################################################################
+# Reservation API — Error Scenarios
+################################################################
+
+### ❌ 1. Create reservation (missing fields → 400)
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1
+}
+
+###
+
+### ❌ 2. Double booking attempt → 409 Conflict
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 1,
+  "reservationTime": "2025-12-10T19:00:00",
+  "durationMinutes": 60
+}
+
+###
+
+### ❌ 3. Reservation in the past → 400 Bad Request
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 1,
+  "reservationTime": "2020-01-01T19:00:00",
+  "durationMinutes": 60
+}
+
+###
+
+### ❌ 4. Outside opening hours (e.g., 2 AM) → 400 Bad Request
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 1,
+  "reservationTime": "2025-12-10T02:00:00",
+  "durationMinutes": 60
+}
+
+###
+
+### ❌ 5. Exceed table capacity → 400 Bad Request
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 2,
+  "reservationTime": "2025-12-09T14:00:00",
+  "numGuests": 10,
+  "durationMinutes": 60
+}
+
+###
+
+### ❌ 6. Update reservation (not found → 404)
+PUT http://localhost:8080/api/reservations/9999
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "tableId": 2,
+  "reservationTime": "2025-12-11T19:00:00",
+  "numGuests": 4
+}
+
+###
+
+### ❌ 7. Delete reservation (not found → 404)
+DELETE http://localhost:8080/api/reservations/9999
