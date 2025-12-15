@@ -1,7 +1,7 @@
 // src/main/java/com/restaurant/service/TableService.java
 package com.restaurant.service;
 
-import com.restaurant.dto.TableDTO;
+import com.restaurant.dto.RestaurantTableDTO;
 import com.restaurant.entity.Restaurant;
 import com.restaurant.entity.RestaurantTable;
 import com.restaurant.exception.BadRequestException;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TableService {
+public class RestaurantTableService {
 
     @Autowired
     private TableRepository tableRepository;
@@ -26,18 +26,18 @@ public class TableService {
 
     /*---------------------- Public Methods ----------------------*/
 
-    public List<TableDTO> getAllTables() {
+    public List<RestaurantTableDTO> getAllTables() {
         return tableRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public TableDTO getTableById(Long id) {
+    public RestaurantTableDTO getTableById(Long id) {
         RestaurantTable table = getTableOrThrow(id);
         return convertToDTO(table);
     }
 
-    public TableDTO createTable(TableDTO tableDTO) {
+    public RestaurantTableDTO createTable(RestaurantTableDTO tableDTO) {
         validateCreateInput(tableDTO);
 
         Restaurant restaurant =
@@ -49,7 +49,7 @@ public class TableService {
         return convertToDTO(tableRepository.save(table));
     }
 
-    public TableDTO updateTable(Long id, TableDTO tableDTO) {
+    public RestaurantTableDTO updateTable(Long id, RestaurantTableDTO tableDTO) {
         RestaurantTable table = getTableOrThrow(id);
         updateTableFields(table, tableDTO);
         return convertToDTO(tableRepository.save(table));
@@ -82,13 +82,13 @@ public class TableService {
                         ));
     }
 
-    private void validateCreateInput(TableDTO dto) {
+    private void validateCreateInput(RestaurantTableDTO dto) {
         if (dto.getRestaurantId() == null) {
             throw new BadRequestException("restaurantId is required");
         }
     }
 
-    private void updateTableFields(RestaurantTable table, TableDTO dto) {
+    private void updateTableFields(RestaurantTable table, RestaurantTableDTO dto) {
         if (dto.getRestaurantId() != null) {
             table.setRestaurant(
                     getRestaurantOrThrow(dto.getRestaurantId())
@@ -99,8 +99,8 @@ public class TableService {
         table.setAvailable(dto.isAvailable());
     }
 
-    private TableDTO convertToDTO(RestaurantTable table) {
-        TableDTO dto = new TableDTO();
+    private RestaurantTableDTO convertToDTO(RestaurantTable table) {
+        RestaurantTableDTO dto = new RestaurantTableDTO();
         dto.setId(table.getId());
         dto.setRestaurantId(table.getRestaurant().getId());
         dto.setTableNumber(table.getTableNumber());
@@ -109,7 +109,7 @@ public class TableService {
         return dto;
     }
 
-    private RestaurantTable convertToEntity(TableDTO dto) {
+    private RestaurantTable convertToEntity(RestaurantTableDTO dto) {
         RestaurantTable table = new RestaurantTable();
         table.setTableNumber(dto.getTableNumber());
         table.setCapacity(dto.getCapacity());

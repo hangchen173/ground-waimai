@@ -1,8 +1,8 @@
 // src/main/java/com/restaurant/controller/TableController.java
 package com.restaurant.controller;
 
-import com.restaurant.dto.TableDTO;
-import com.restaurant.service.TableService;
+import com.restaurant.dto.RestaurantTableDTO;
+import com.restaurant.service.RestaurantTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,28 +12,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tables")
-public class TableController {
+public class RestaurantTableController {
 
     @Autowired
-    private TableService tableService;
+    private RestaurantTableService tableService;
 
     @GetMapping
-    public ResponseEntity<List<TableDTO>> getAllTables() {
+    public ResponseEntity<List<RestaurantTableDTO>> getAllTables() {
         return ResponseEntity.ok(tableService.getAllTables());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TableDTO> getTableById(@PathVariable Long id) {
+    public ResponseEntity<RestaurantTableDTO> getTableById(@PathVariable Long id) {
         return ResponseEntity.ok(tableService.getTableById(id));
     }
 
     @PostMapping
-    public ResponseEntity<TableDTO> createTable(@RequestBody TableDTO tableDTO) {
+    public ResponseEntity<RestaurantTableDTO> createTable(@RequestBody RestaurantTableDTO tableDTO) {
         return new ResponseEntity<>(tableService.createTable(tableDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TableDTO> updateTable(@PathVariable Long id, @RequestBody TableDTO tableDTO) {
+    public ResponseEntity<RestaurantTableDTO> updateTable(@PathVariable Long id, @RequestBody RestaurantTableDTO tableDTO) {
         return ResponseEntity.ok(tableService.updateTable(id, tableDTO));
     }
 

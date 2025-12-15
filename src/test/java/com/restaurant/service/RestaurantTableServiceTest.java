@@ -1,6 +1,6 @@
 package com.restaurant.service;
 
-import com.restaurant.dto.TableDTO;
+import com.restaurant.dto.RestaurantTableDTO;
 import com.restaurant.entity.Restaurant;
 import com.restaurant.entity.RestaurantTable;
 import com.restaurant.exception.BadRequestException;
@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest {
+class RestaurantTableServiceTest {
 
     @Mock
     private TableRepository tableRepository;
@@ -28,11 +28,11 @@ class TableServiceTest {
     private RestaurantRepository restaurantRepository;
 
     @InjectMocks
-    private TableService tableService;
+    private RestaurantTableService tableService;
 
     @Test
     void createTable_WhenRestaurantExists_ShouldSuccess() {
-        TableDTO dto = new TableDTO();
+        RestaurantTableDTO dto = new RestaurantTableDTO();
         dto.setRestaurantId(1L);
         dto.setTableNumber(5);
         dto.setCapacity(4);
@@ -46,7 +46,7 @@ class TableServiceTest {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         when(tableRepository.save(any(RestaurantTable.class))).thenReturn(savedTable);
 
-        TableDTO result = tableService.createTable(dto);
+        RestaurantTableDTO result = tableService.createTable(dto);
 
         assertEquals(10L, result.getId());
         assertEquals(1L, result.getRestaurantId());
@@ -54,7 +54,7 @@ class TableServiceTest {
 
     @Test
     void createTable_WithoutRestaurantId_ShouldThrowBadRequest() {
-        TableDTO dto = new TableDTO();
+        RestaurantTableDTO dto = new RestaurantTableDTO();
         // restaurantId is null
 
         assertThrows(BadRequestException.class, () -> tableService.createTable(dto));
@@ -67,12 +67,12 @@ class TableServiceTest {
         Restaurant r = new Restaurant(); r.setId(5L);
         existing.setRestaurant(r);
 
-        TableDTO dto = new TableDTO(); dto.setCapacity(6); dto.setRestaurantId(null); // No restaurant change
+        RestaurantTableDTO dto = new RestaurantTableDTO(); dto.setCapacity(6); dto.setRestaurantId(null); // No restaurant change
 
         when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(tableRepository.save(any(RestaurantTable .class))).thenAnswer(i -> i.getArgument(0));
 
-        TableDTO result = tableService.updateTable(1L, dto);
+        RestaurantTableDTO result = tableService.updateTable(1L, dto);
 
         assertEquals(6, result.getCapacity());
         assertEquals(5L, result.getRestaurantId()); // Should remain unchanged

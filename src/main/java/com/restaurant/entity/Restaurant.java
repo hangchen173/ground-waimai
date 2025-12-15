@@ -2,8 +2,10 @@ package com.restaurant.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
+
+// ✅ 引入正确的类
+import com.restaurant.entity.RestaurantTable; 
 
 @Entity
 @Getter
@@ -20,6 +22,7 @@ public class Restaurant {
     private String phone;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @ToString.Exclude // 🚨 关键：必须排除，防止死循环
-    private List<Table> tables;
+    @ToString.Exclude 
+    // ✅ 修改泛型类型为 RestaurantTable
+    private List<RestaurantTable> tables; 
 }
