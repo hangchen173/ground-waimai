@@ -27,7 +27,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // API 模式不需要 CSRF
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // 登录注册接口放行
-                .requestMatchers("/api/admin/**").hasRole("ADMIN") // RBAC: 只有管理员能访问
                 .anyRequest().authenticated() // 其他接口必须登录
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 不使用 Session

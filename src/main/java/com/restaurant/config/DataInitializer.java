@@ -9,24 +9,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializer {
-
     @Bean
     public CommandLineRunner initData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // 1. 检查是否存在 admin 用户
+            // 1. 初始化管理员
             if (userRepository.findByUsername("admin").isEmpty()) {
-                
-                // 2. 如果不存在，创建一个
                 User admin = new User();
                 admin.setUsername("admin");
-                // ⭐ 关键点：这里让 Spring 自动加密 "password"，不用你自己去算哈希值
-                admin.setPassword(passwordEncoder.encode("password")); 
-                admin.setRole("ROLE_ADMIN");
-                
+                admin.setPassword(passwordEncoder.encode("password"));
+                admin.setRole("ROLE_ADMIN"); // ⭐ 角色是 ADMIN
                 userRepository.save(admin);
-                System.out.println("✅ 管理员用户已自动创建: admin / password");
-            } else {
-                System.out.println("ℹ️ 管理员用户已存在，跳过创建。");
+                System.out.println("✅ 管理员已创建: admin / password");
+            }
+
+            // 2. 初始化普通顾客 (新增代码)
+            if (userRepository.findByUsername("customer").isEmpty()) {
+                User customer = new User();
+                customer.setUsername("customer");
+                customer.setPassword(passwordEncoder.encode("password")); // 密码也是 password，方便记
+                customer.setRole("ROLE_CUSTOMER"); // ⭐ 角色是 CUSTOMER
+                userRepository.save(customer);
+                System.out.println("✅ 测试顾客已创建: customer / password");
             }
         };
     }

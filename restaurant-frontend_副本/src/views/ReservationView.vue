@@ -30,9 +30,20 @@
         </template>
       </el-table-column>
 
+      <!-- ⭐ 权限控制：只有管理员能看到操作列（或者只隐藏按钮） -->
       <el-table-column label="操作">
         <template #default="{ row }">
-          <el-button type="danger" link @click="handleDelete(row.id)">取消</el-button>
+          <!-- 👇 核心修改：v-if 判断角色 -->
+          <el-button 
+            v-if="userRole === 'ROLE_ADMIN'"
+            type="danger" 
+            link 
+            @click="handleDelete(row.id)"
+          >
+            取消
+          </el-button>
+          <!-- 如果是顾客，可以显示一个占位符或者什么都不显示 -->
+          <span v-else style="color: #999; font-size: 12px;">不可操作</span>
         </template>
       </el-table-column>
     </el-table>
@@ -81,18 +92,20 @@
 import { ref, reactive, onMounted } from 'vue'
 import { getReservations, createReservation, deleteReservation } from '../api/all'
 import { ElMessage } from 'element-plus'
+import { jwtDecode } from "jwt-decode" // ⭐ 核心修改：导入解码库
 
 const tableData = ref([])
 const dialogVisible = ref(false)
+const userRole = ref('') // ⭐ 核心修改：存储当前用户角色
 
 // 表单默认值
 const form = reactive({
   customerId: '',
   tableId: '',
-  reservationTime: '', // 绑定日期选择器
+  reservationTime: '',
   numGuests: 2,
   durationMinutes: 60,
-  status: 'CONFIRMED' // 后端逻辑可能会覆盖这个，但传过去比较安全
+  status: 'CONFIRMED'
 })
 
 // 加载列表
@@ -125,9 +138,22 @@ const handleSubmit = async () => {
     dialogVisible.value = false
     loadData()
   } catch (e) {
-    // 错误处理交给 axios 拦截器了 (比如时间冲突会报 409)
+    // 错误处理交给 axios 拦截器
   }
 }
 
-onMounted(loadData)
+onMounted(() => {
+  // ⭐ 核心修改：解析 Token 获取角色
+  const token = localStorage.getItem('token')
+  if (token) {
+    try {
+      const decoded = jwtDecode(token)
+      userRole.value = decoded.role || '' // 拿到 ROLE_ADMIN 或 ROLE_CUSTOMER
+    } catch (e) {
+      console.error('Token 解析失败', e)
+    }
+  }
+  
+  loadData()
+})
 </script>

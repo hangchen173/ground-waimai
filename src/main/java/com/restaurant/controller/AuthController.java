@@ -54,4 +54,24 @@ public class AuthController {
         
         return new AuthResponse(token);
     }
+// 添加这个 endpoint
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody @Valid AuthRequest request) {
+        // 1. 检查用户名是否存在
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "用户名已存在");
+        }
+
+        // 2. 创建新用户
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // 必须加密！
+        user.setRole("ROLE_CUSTOMER"); // 默认注册的都是普通顾客
+        
+        userRepository.save(user);
+
+        // 3. 注册成功后直接颁发 Token，让用户自动登录
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        return new AuthResponse(token);
+    }
 }
