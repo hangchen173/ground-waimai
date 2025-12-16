@@ -1,5 +1,5 @@
 import request from './axios'
-
+export const register = (data) => request.post('/auth/register', data)
 // --- 客户 (Customers) ---
 export const getCustomers = () => request.get('/customers')
 export const createCustomer = (data) => request.post('/customers', data)
